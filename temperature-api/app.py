@@ -20,7 +20,7 @@ sensor_id_mapping = {v: k for k, v in location_mapping.items()}
 @app.route('/temperature', methods=['GET'])
 def get_temperature():
     """
-    Возвращает случайное значение температуры для указанного location.
+    Возвращает рандомное знач.температуры для указанного location.
     Если location не указан, используется значение по умолчанию.
     Если location не найден, возвращается ошибка.
     """
