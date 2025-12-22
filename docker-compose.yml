@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-  # 1. Имитатор датчика температуры
   temperature-api:
     build:
       context: ./temperature-api
@@ -9,11 +8,8 @@ services:
     ports:
       - "8081:8081"
     environment:
-      # Для Flask
       - FLASK_ENV=development
     restart: always
-
-  # 2. База данных PostgreSQL для smart_home
   smart_home_db:
     image: postgres:13
     restart: always
@@ -22,9 +18,9 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: smarthome_db
     volumes:
-      # Монтирование скрипта инициализации
+
       - ./smart_home/init.sql:/docker-entrypoint-initdb.d/init.sql
-      # Для сохранения данных
+
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
