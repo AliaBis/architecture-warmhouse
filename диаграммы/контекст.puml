@@ -1,0 +1,14 @@
+@startuml System Context
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+title Диаграмма контекста (As-Is) - Монолит "Тёплый дом"
+
+Person(user, " Владелец дома")
+System(monolith, "Управление только отоплением.")
+System(sensor, "Датчик измерения")
+
+Rel(user, monolith, "Управляет отоплением и просматривает температуру")
+Rel(monolith, sensor, "Запрос данных о температуре/Отправка команды управления")
+Rel(sensor, monolith, "Ответ с данными о температуре")
+
+@enduml

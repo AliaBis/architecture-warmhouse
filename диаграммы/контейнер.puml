@@ -1,0 +1,58 @@
+@startuml Containers
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title Диаграмма контейнеров (To-Be) - Экосистема "Умный дом"
+
+Person(user, "Владелец дома")
+
+System_Boundary(smarthome, "Экосистема 'Тёплый дом'") {
+
+    Container(web_app, "Пользовательский интерфейс для управления и мониторинга")
+    Container(api_gateway, "Вход, аутентификация")
+
+    Container(user_service, "User Service", "Управление пользователями и доступом")
+    Container(house_service, "House Service","Управление домами и привязкой устройств")
+    Container(device_registry, "Device Registry Service","Метаданные и конфигурация устройств")
+    Container(command_service, "Command Service","Обработка команд управления устройствами")
+    Container(telemetry_service, "Telemetry Service", "Сбор и хранение временных рядов (температура, состояние)")
+    Container(automation_service, "Automation Service", "Движок для выполнения сценариев (rules engine)")
+    Container(integration_gateway, "Device Integration Gateway (DIG)", "Шлюз для общения с физ.устройствами")
+
+    ContainerDb(db_user, "User DB", "Данные пользователей")
+    ContainerDb(db_house, "House DB", "Данные о домах")
+    ContainerDb(db_device, "Device DB", "Конфигурация устройств")
+    ContainerDb(db_telemetry, "Telemetry DB", "Хранилище временных рядов")
+    
+    ContainerQueue(msg_queue, "Command Queue", "Асинхронная очередь для команд")
+    ContainerQueue(telemetry_queue, "Telemetry Stream", "Поток данных телеметрии")
+
+    Rel(user, web_app, "Использует", "HTTPS")
+    Rel(web_app, api_gateway, "API запросы", "HTTPS/REST")
+
+    Rel(api_gateway, user_service, "Аутентификация, Профиль")
+    Rel(api_gateway, house_service, "Управление домом")
+    Rel(api_gateway, device_registry, "Получение списка устройств")
+    Rel(api_gateway, command_service, "Отправка команды устройству")
+    Rel(api_gateway, telemetry_service, "Получение истории данных")
+
+    Rel(user_service, db_user, "Чтение/Запись")
+    Rel(house_service, db_house, "Чтение/Запись")
+    Rel(device_registry, db_device, "Чтение/Запись")
+    Rel(telemetry_service, db_telemetry, "Чтение/Запись")
+
+    Rel(command_service, msg_queue, "Отправляет команды", "Async")
+    Rel(msg_queue, integration_gateway, "Получает команды", "Async")
+
+    Rel(integration_gateway, telemetry_queue, "Отправляет данные телеметрии", "Async")
+    Rel(telemetry_queue, telemetry_service, "Получает данные для хранения", "Async")
+    Rel(telemetry_queue, automation_service, "Получает данные для обработки сценариев", "Async")
+
+    Rel(automation_service, command_service, "Отправляет команды по сценарию", "REST")
+    Rel(automation_service, device_registry, "Получает конфигурацию устройств", "REST")
+
+}
+
+System(partner_devices, "Партнерские Устройства", "Датчики, реле, умные замки и т.д.")
+Rel(integration_gateway, partner_devices, "Обмен данными и командами", "MQTT, Partner API, Custom Protocols")
+
+@enduml
