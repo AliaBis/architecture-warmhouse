@@ -1,7 +1,6 @@
 # Build stage
 FROM golang:1.22-alpine AS builder
 
-# Set working directory
 WORKDIR /app
 
 # Copy go.mod and go.sum files
@@ -14,8 +13,9 @@ RUN go mod download
 COPY . .
 
 # Build the application
-RUN CGO_ENABLED=0 GOOS=linux go build -o smarthome
-
+#RUN CGO_ENABLED=0 GOOS=linux go build -o smarthome
+# Сборка с оптимизацией размера
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o smarthome main.go
 # Runtime stage
 FROM alpine:latest
 

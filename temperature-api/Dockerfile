@@ -1,18 +1,16 @@
 # Используем легковесный базовый образ Python
-FROM python:3.9-slim
-
+FROM python:3.11-slim
 # Установка рабочего каталога
 WORKDIR /app
-
-# Копирование файлов и установка зависимостей
-COPY requirements.txt requirements.txt
+# Установка зависимостей ОС
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+# Установка зависимостей Python
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Копирование основного приложения
 COPY app.py .
 
-# Открытие порта
-EXPOSE 8081
+# Flask по умолчанию будет на 5000, открываем его
+EXPOSE 5000
 
-# Определение команды запуска
 CMD ["python", "app.py"]

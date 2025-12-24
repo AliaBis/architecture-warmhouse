@@ -1,0 +1,18 @@
+@startuml Code_TemperatureAPI
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title Диаграмма кода для компонента "Temperature API"
+Person(api_consumer, "Потребитель API")
+Component(temperature_api_component, "Temperature API", "Python, Flask", "Микросервис"){
+Rel(api_consumer, flask_app_instance, "HTTP GET запрос", "/temperature")
+    Rel(flask_app_instance, get_temperature_handler, "Маршрутизирует запрос")
+
+    Rel(get_temperature_handler, flask_request_obj, "Читает параметры")
+    Rel(get_temperature_handler, mappings_data_store, "Использует сопоставления")
+    Rel(get_temperature_handler, random_lib, "Генерирует число")
+    Rel(get_temperature_handler, flask_jsonify_func, "Формирует JSON ответ")
+
+    Rel(flask_app_instance, api_consumer, "Возвращает HTTP ответ", "JSON")
+}
+@enduml
+
