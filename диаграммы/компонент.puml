@@ -1,0 +1,34 @@
+@startuml ComponentDiagr
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+System(partner_devices, "Партнерские Устройства")
+
+title Диаграмма компонентов - Device Integration Gateway (DIG)
+
+Container(msg_queue, "Command Queue", "Kafka", "Входящие команды")
+Container(telemetry_queue, "Telemetry Stream", "Kafka", "Исходящие данные")
+Container(device_registry, "Device Registry Service", "REST API", "Метаданные устройств")
+System_Boundary(dig, "Device Integration Gateway") {
+Component(api_handler, "API Command Handler", "Go Component", "Принимает команды из очереди и направляет в Device Manager")
+Component(device_manager, "Device Manager", "Go Component", "Управляет состоянием подключений и маршрутизацией команд")
+Component(mqtt_adapter, "MQTT Adapter", "Go Component", "Обрабатывает взаимодействие с устройствами по протоколу MQTT")
+Component(partner_adapter, "Partner API Adapter", "Go Component", "Обрабатывает взаимодействие с устройствами через API")
+Component(telemetry_processor, "Telemetry Processor", "Go Component", "Нормализует и валидирует входящие данные с устройств")
+
+Rel(msg_queue, api_handler, "Получает команду (например, 'Включить свет')", "Async")
+Rel(api_handler, device_manager, "Передает команду")
+Rel(device_manager, mqtt_adapter, "Маршрутизирует команду для MQTT устройства")
+Rel(device_manager, partner_adapter, "Маршрутизирует команду для Partner API устройства")
+
+Rel(mqtt_adapter, partner_devices, "Отправляет команду / Получает телеметрию", "MQTT")
+Rel(partner_adapter, partner_devices, "Отправляет команду / Получает телеметрию", "HTTP/Partner API")
+
+Rel(partner_devices, telemetry_processor, "Отправляет сырые данные телеметрии")
+Rel(telemetry_processor, telemetry_queue, "Отправляет нормализованные данные", "Async")
+
+Rel(device_manager, device_registry, "Проверяет статус и протокол устройства", "REST")
+}
+
+@enduml
+
+

@@ -1,0 +1,57 @@
+@startuml er
+!define primary_key(x) PK x
+!define foreign_key(x) FK x
+
+hide circle
+skinparam linetype ortho
+
+entity User {
+    primary_key(user_id) INTEGER
+    --
+    username VARCHAR
+    email VARCHAR
+    password_hash VARCHAR
+    created_at TIMESTAMP
+}
+
+entity House {
+    primary_key(house_id) INTEGER
+    --
+    foreign_key(user_id) INTEGER
+    address VARCHAR
+    name VARCHAR
+}
+
+entity DeviceType {
+    primary_key(type_id) INTEGER
+    --
+    name VARCHAR
+    protocol VARCHAR
+    manufacturer VARCHAR
+}
+
+entity Device {
+    primary_key(device_id) INTEGER
+    --
+    foreign_key(type_id) INTEGER
+    foreign_key(house_id) INTEGER
+    serial_number VARCHAR
+    status VARCHAR (e.g., 'online', 'offline')
+    last_seen TIMESTAMP
+}
+
+entity TelemetryData {
+    primary_key(data_id) BIGINT
+    --
+    foreign_key(device_id) INTEGER
+    timestamp TIMESTAMP
+    metric_name VARCHAR (e.g., 'temperature', 'power')
+    value DECIMAL
+}
+
+User ||--o{ House : has
+House ||--o{ Device : contains
+DeviceType ||--o{ Device : is_of_type
+Device ||--o{ TelemetryData : generates
+
+@enduml

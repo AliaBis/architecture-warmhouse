@@ -1,0 +1,101 @@
+openapi: 3.0.0
+info:
+  title: Smart Home Core API
+  version: 1.0.0
+
+paths:
+  /devices/{device_id}:
+    get:
+      summary: Получить информацию об устройстве
+      parameters:
+        - in: path
+          name: device_id
+          required: true
+          schema:
+            type: integer
+          description: Уникальный ID устройства
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceDetails'
+              examples:
+                success:
+                  value:
+                    device_id: 101
+                    serial_number: "SN-HEAT-001"
+                    type: "Heating Module"
+                    status: "ON"
+                    current_temp: 22.5
+                    target_temp: 25.0
+        '404':
+          description: Устройство не найдено
+
+  /commands:
+    post:
+      summary: Отправить команду управления устройством
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceCommand'
+            examples:
+              turn_on_light:
+                value:
+                  device_id: 205
+                  command_type: "SET_STATE"
+                  payload:
+                    state: "ON"
+              set_heating_temp:
+                value:
+                  device_id: 101
+                  command_type: "SET_TEMP"
+                  payload:
+                    temperature: 24.0
+      responses:
+        '202':
+          description: Команда принята к обработке (асинхронно)
+        '400':
+          description: Неверный формат команды
+        '404':
+          description: Устройство не найдено
+
+components:
+  schemas:
+    DeviceDetails:
+      type: object
+      properties:
+        device_id:
+          type: integer
+        serial_number:
+          type: string
+        type:
+          type: string
+        status:
+          type: string
+        current_temp:
+          type: number
+          format: float
+        target_temp:
+          type: number
+          format: float
+
+    DeviceCommand:
+      type: object
+      required:
+        - device_id
+        - command_type
+        - payload
+      properties:
+        device_id:
+          type: integer
+          description: ID устройства, которому адресована команда
+        command_type:
+          type: string
+          description: Тип команды (e.g., SET_STATE, SET_TEMP, LOCK)
+        payload:
+          type: object
+          description: Параметры команды

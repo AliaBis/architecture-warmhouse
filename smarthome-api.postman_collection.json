@@ -77,13 +77,13 @@
                 "method": "POST",
                 "header": [
                     {
-                        "key": "Content-Type",
+                                            "key": "Content-Type",
                         "value": "application/json"
                     }
                 ],
                 "body": {
                     "mode": "raw",
-                    "raw": "{\n    \"name\": \"Living Room Temperature\",\n    \"type\": \"temperature\",\n    \"location\": \"Living Room\",\n    \"unit\": \"°C\"\n}"
+                    "raw": "{\n \t\"name\": \"Living Room Temperature\",\n \t\"type\": \"temperature\",\n \t\"location\": \"Living Room\",\n \t\"unit\": \"°C\"\n}"
                 },
                 "url": {
                     "raw": "http://localhost:8080/api/v1/sensors",
@@ -114,7 +114,7 @@
                 ],
                 "body": {
                     "mode": "raw",
-                    "raw": "{\n    \"name\": \"Updated Living Room Temperature\",\n    \"type\": \"temperature\",\n    \"location\": \"Living Room\",\n    \"unit\": \"°C\"\n}"
+                    "raw": "{\n \t\"name\": \"Updated Living Room Temperature\",\n \t\"type\": \"temperature\",\n \t\"location\": \"Living Room\",\n \t\"unit\": \"°C\"\n}"
                 },
                 "url": {
                     "raw": "http://localhost:8080/api/v1/sensors/1",
@@ -145,7 +145,7 @@
                     "host": [
                         "localhost"
                     ],
-                    "port": "8080",
+                                        "port": "8080",
                     "path": [
                         "api",
                         "v1",
@@ -169,7 +169,7 @@
                 ],
                 "body": {
                     "mode": "raw",
-                    "raw": "{\n    \"value\": 22.5,\n    \"status\": \"active\"\n}"
+                    "raw": "{\n \t\"value\": 22.5,\n \t\"status\": \"active\"\n}"
                 },
                 "url": {
                     "raw": "http://localhost:8080/api/v1/sensors/1/value",
@@ -187,6 +187,30 @@
                     ]
                 },
                 "description": "Update a sensor's value and status"
+            },
+            "response": []
+        },
+        {
+            "name": "Get Temperature by Location (External API via Go)",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "http://localhost:8080/api/v1/sensors/temperature/Living%20Room",
+                    "protocol": "http",
+                    "host": [
+                        "localhost"
+                    ],
+                    "port": "8080",
+                    "path": [
+                        "api",
+                        "v1",
+                        "sensors",
+                        "temperature",
+                        "Living Room"
+                    ]
+                },
+                "description": "Get real-time temperature data for a specific location from external API via Go service"
             },
             "response": []
         }
@@ -219,3 +243,5 @@
         }
     ]
 }
+
+
